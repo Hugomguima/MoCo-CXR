@@ -158,7 +158,7 @@ def main():
     args.distributed = args.world_size > 1 or args.multiprocessing_distributed
 
     ngpus_per_node = torch.cuda.device_count()
-    import pdb; pdb.set_trace()
+    # import pdb; pdb.set_trace()
     if args.multiprocessing_distributed:
         # Since we have ngpus_per_node processes per node, the total world_size
         # needs to be adjusted accordingly
@@ -223,11 +223,12 @@ def main_worker(gpu, ngpus_per_node, args, checkpoint_folder):
         torch.cuda.set_device(args.gpu)
         model = model.cuda(args.gpu)
         # comment out the following line for debugging
-        raise NotImplementedError("Only DistributedDataParallel is supported.")
+        ## raise NotImplementedError("Only DistributedDataParallel is supported.")
     else:
         # AllGather implementation (batch shuffle, queue update, etc.) in
         # this code only supports DistributedDataParallel.
-        raise NotImplementedError("Only DistributedDataParallel is supported.")
+        ## raise NotImplementedError("Only DistributedDataParallel is supported.")
+        pass
 
     print('Distributed model defined')
 
@@ -306,6 +307,7 @@ def main_worker(gpu, ngpus_per_node, args, checkpoint_folder):
          moco.loader.TwoCropsTransform(transforms.Compose(augmentation)))
 
     print('Training dataset defined')
+    print(train_dataset)
     
     if args.distributed:
         train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset)
@@ -321,6 +323,7 @@ def main_worker(gpu, ngpus_per_node, args, checkpoint_folder):
     # train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, drop_last=True)
 
     print('Training dataloader defined')
+    print(train_loader)
 
     for epoch in range(args.start_epoch, args.epochs):
         if args.distributed:
@@ -353,12 +356,15 @@ def train(train_loader, model, criterion, optimizer, epoch, args):
         [batch_time, data_time, losses, top1, top5],
         prefix="Epoch: [{}]".format(epoch))
 
+
+
     # switch to train mode
     model.train()
     
     print(f'Running epoch {epoch}')
 
     end = time.time()
+
     for i, (images, _) in enumerate(train_loader):
         # measure data loading time
         data_time.update(time.time() - end)
@@ -465,7 +471,7 @@ def accuracy(output, target, topk=(1,)):
 
         res = []
         for k in topk:
-            correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
+            correct_k = correct[:k].contiguous().view(-1).float().sum(0, keepdim=True)
             res.append(correct_k.mul_(100.0 / batch_size))
         return res
 
