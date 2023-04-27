@@ -4,16 +4,16 @@ import datetime
 from pathlib import Path
 import getpass
 
-import getpass
-
-if str(getpass.getuser()) == 'jby':
-    STORAGE_ROOT = Path('/home/jby/chexpert_experiments')
-else:
-    #STORAGE_ROOT = Path('/deep/group/aihc-bootcamp-spring2020/cxr_fewer_samples/experiments')
-    STORAGE_ROOT = Path('storage/chexpert_experiments')
 
 
-def get_storage_folder(exp_name, exp_type):
+
+def get_storage_folder(exp_name, exp_type,exp_storage):
+
+    if str(getpass.getuser()) == 'jby':
+        STORAGE_ROOT = Path('/home/jby/chexpert_experiments')
+    else:
+        #STORAGE_ROOT = Path('/deep/group/aihc-bootcamp-spring2020/cxr_fewer_samples/experiments')
+        STORAGE_ROOT = Path(exp_storage)
 
     try:
         jobid = os.environ["SLURM_JOB_ID"]

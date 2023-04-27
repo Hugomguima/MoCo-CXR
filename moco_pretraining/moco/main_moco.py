@@ -129,6 +129,10 @@ parser.add_argument('--rotate', dest='rotate', type=int, default=10,
 parser.add_argument('--optimizer', dest='optimizer', default='adam',
                     help='optimizer to use, chexpert=adam, moco=sgd')
 
+### Added arguments
+
+parser.add_argument('--storage', type=str, default='/media/SEAGATE6T/HGUIMARAES/dataset/storage/chexpert_experiments',help='Storage model checkpoint path')
+
 
 
 def main():
@@ -136,7 +140,7 @@ def main():
 
     print(args)
 
-    checkpoint_folder = storage_util.get_storage_folder(args.exp_name, f'moco{"v2" if args.mlp else "v1"}')
+    checkpoint_folder = storage_util.get_storage_folder(args.exp_name, f'moco{"v2" if args.mlp else "v1"}',args.storage)
 
     if args.seed is not None:
         random.seed(args.seed)
@@ -307,7 +311,6 @@ def main_worker(gpu, ngpus_per_node, args, checkpoint_folder):
          moco.loader.TwoCropsTransform(transforms.Compose(augmentation)))
 
     print('Training dataset defined')
-    print(train_dataset)
     
     if args.distributed:
         train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset)
@@ -323,7 +326,6 @@ def main_worker(gpu, ngpus_per_node, args, checkpoint_folder):
     # train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, drop_last=True)
 
     print('Training dataloader defined')
-    print(train_loader)
 
     for epoch in range(args.start_epoch, args.epochs):
         if args.distributed:
