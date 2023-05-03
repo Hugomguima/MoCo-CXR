@@ -133,6 +133,7 @@ parser.add_argument('--optimizer', dest='optimizer', default='adam',
 
 parser.add_argument('--storage', type=str, default='/media/SEAGATE6T/HGUIMARAES/dataset/storage/chexpert_experiments',help='Storage model checkpoint path')
 
+parser.add_argument('--flipping', type=bool, default = True, help='Adds/removes horizontal flipping for the augmentation')
 
 
 def main():

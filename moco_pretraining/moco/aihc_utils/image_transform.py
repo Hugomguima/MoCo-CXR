@@ -12,8 +12,12 @@ def get_transform(args, training):
         transforms_list = [transforms.Resize((args.img_size, args.img_size))]
 
     # Data augmentation
-    if training:
+    if training and args.flipping:
         transforms_list += [transforms.RandomHorizontalFlip(),
+                            transforms.RandomRotation(args.rotate), 
+                            transforms.RandomCrop((args.crop, args.crop)) if args.crop != 0 else None]
+    elif training and not args.flipping:
+        transforms_list += [#transforms.RandomHorizontalFlip(),
                             transforms.RandomRotation(args.rotate), 
                             transforms.RandomCrop((args.crop, args.crop)) if args.crop != 0 else None]
     else:
